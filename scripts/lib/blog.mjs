@@ -13,17 +13,20 @@ export function parsePost(text, filename) {
   const { data, content } = matter(text);
   if (typeof data.title !== 'string' || !data.title.trim()) throw new Error(`${filename}：请填写 title。`);
   if (!validSlug(data.slug)) throw new Error(`${filename}：slug 请使用小写字母、数字和连字符。`);
-  if (!['public', 'locked'].includes(data.visibility)) throw new Error(`${filename}：visibility 必须是 public 或 locked。`);
+  if (typeof data.locked !== 'boolean') throw new Error(`${filename}：locked 必须是布尔值：true（上锁）或 false（公开）。`);
   if (data.tags !== undefined && (!Array.isArray(data.tags) || data.tags.some((tag) => typeof tag !== 'string'))) throw new Error(`${filename}：tags 必须是文字列表。`);
   if (data.draft !== undefined && typeof data.draft !== 'boolean') throw new Error(`${filename}：draft 必须是 true 或 false。`);
-  return { slug: data.slug, title: data.title.trim(), tags: data.tags ?? [], visibility: data.visibility, draft: data.draft ?? false, content: content.trim() };
+  return { slug: data.slug, title: data.title.trim(), tags: data.tags ?? [], locked: data.locked, draft: data.draft ?? false, content: content.trim() };
 }
 
-export async function writeChanged(filename, text) {
+export async function writeChanged(filename, text, options = {}) {
   const previous = await fs.readFile(filename, 'utf8').catch((error) => { if (error.code === 'ENOENT') return null; throw error; });
-  if (previous === text) return;
+  if (previous === text) {
+    if (options.mode) await fs.chmod(filename, options.mode);
+    return;
+  }
   await fs.mkdir(path.dirname(filename), { recursive: true });
-  await fs.writeFile(`${filename}.tmp`, text);
+  await fs.writeFile(`${filename}.tmp`, text, options);
   await fs.rename(`${filename}.tmp`, filename);
 }
 
@@ -36,11 +39,22 @@ export async function encryptPost(post, password) {
   const key = await webcrypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations, hash: 'SHA-256' }, material, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
   const ciphertext = await webcrypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(post.content));
   const base64 = (value) => Buffer.from(value).toString('base64');
-  return { slug: post.slug, title: post.title, tags: post.tags, visibility: 'locked', encrypted: { salt: base64(salt), iv: base64(iv), ciphertext: base64(ciphertext), iterations } };
+  return { slug: post.slug, title: post.title, tags: post.tags, locked: true, encrypted: { salt: base64(salt), iv: base64(iv), ciphertext: base64(ciphertext), iterations } };
+}
+
+export async function configuredPassword() {
+  const config = JSON.parse(await fs.readFile(path.join(root, '.blog-local.json'), 'utf8').catch((error) => {
+    if (error.code === 'ENOENT') return '{}';
+    throw error;
+  }));
+  const password = config.sharedPassword ?? process.env.BLOG_PASSWORD;
+  if (password !== undefined && (typeof password !== 'string' || password.length < 12)) throw new Error('统一文章密码至少需要 12 个字符。');
+  return password;
 }
 
 export async function passwordFor(title) {
-  if (process.env.BLOG_PASSWORD) return process.env.BLOG_PASSWORD;
+  const shared = await configuredPassword();
+  if (shared) return shared;
   if (!process.stdin.isTTY || !process.stdout.isTTY) throw new Error(`「${title}」需要密码。请在终端运行同步命令。`);
   process.stdout.write(`「${title}」的密码（至少 12 位，输入不显示）：`);
   return new Promise((resolve, reject) => {
@@ -72,13 +86,13 @@ export async function generatePosts() {
   for (const file of files.sort()) {
     if (file.endsWith('.md')) {
       const post = parsePost(await fs.readFile(path.join(contentDirectory, file), 'utf8'), file);
-      if (post.visibility === 'locked') throw new Error(`${file}：私密原稿必须放在仓库外，通过 blog:sync 加密导入。`);
+      if (post.locked === true) throw new Error(`${file}：私密原稿必须放在仓库外，通过 blog:sync 加密导入。`);
       if (!post.draft) {
-        posts.push({ slug: post.slug, title: post.title, tags: post.tags, visibility: 'public', content: post.content });
+        posts.push({ slug: post.slug, title: post.title, tags: post.tags, locked: false, content: post.content });
       }
     } else if (file.endsWith('.locked.json')) {
       const post = JSON.parse(await fs.readFile(path.join(contentDirectory, file), 'utf8'));
-      if (!validSlug(post.slug) || !post.title || post.visibility !== 'locked' || !post.encrypted || 'content' in post) throw new Error(`${file}：无效的加密文章。`);
+      if (!validSlug(post.slug) || !post.title || post.locked !== true || !post.encrypted || 'content' in post) throw new Error(`${file}：无效的加密文章。`);
       posts.push(post);
     }
   }

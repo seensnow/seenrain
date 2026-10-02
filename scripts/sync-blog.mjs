@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
-import { root, contentDirectory, parsePost, encryptPost, passwordFor, writeChanged, generatePosts } from './lib/blog.mjs';
+import { root, contentDirectory, parsePost, encryptPost, configuredPassword, passwordFor, writeChanged, generatePosts } from './lib/blog.mjs';
 
 export async function syncBlog(sourceOverride) {
   const configFile = path.join(root, '.blog-local.json');
@@ -25,6 +25,7 @@ export async function syncBlog(sourceOverride) {
   const previousSlugs = new Set(state.slugs);
   const digests = {};
   const planned = [];
+  const sharedPassword = await configuredPassword();
   for (const post of entries.filter((post) => !post.draft)) {
     const markdown = path.join(contentDirectory, `${post.slug}.md`);
     const encryptedFile = path.join(contentDirectory, `${post.slug}.locked.json`);
@@ -33,9 +34,9 @@ export async function syncBlog(sourceOverride) {
         if (await fs.stat(filename).then(() => true, () => false)) throw new Error(`${post.slug} 已在网站中存在，请为新文章换一个 slug。`);
       }
     }
-    if (post.visibility === 'locked') {
+    if (post.locked === true) {
       if (await fs.stat(markdown).then(() => true, () => false)) throw new Error(`${post.title} 曾作为公开文章导入。请先移除 content/blogs/${post.slug}.md；旧的公开版本和 Git 历史不会因上锁而消失。`);
-      const digest = createHash('sha256').update(JSON.stringify(post)).digest('hex');
+      const digest = createHash('sha256').update(JSON.stringify([post, sharedPassword ?? null])).digest('hex');
       digests[post.slug] = digest;
       if (state.digests?.[post.slug] === digest && await fs.stat(encryptedFile).then(() => true, () => false)) continue;
       const entry = await encryptPost(post, await passwordFor(post.title));
@@ -59,7 +60,7 @@ export async function syncBlog(sourceOverride) {
     if (filename.endsWith('.md')) await fs.rm(filename.replace(/\.md$/, '.locked.json'), { force: true });
   }
   await generatePosts();
-  await writeChanged(configFile, JSON.stringify({ sourceDirectory: directory }, null, 2) + '\n');
+  await writeChanged(configFile, JSON.stringify({ ...config, sourceDirectory: directory }, null, 2) + '\n', { mode: 0o600 });
   await writeChanged(stateFile, JSON.stringify({ slugs: activeSlugs, digests }, null, 2) + '\n');
   console.log(`已从 Obsidian 同步 ${activeSlugs.length} 篇文章；草稿不发布。`);
 }

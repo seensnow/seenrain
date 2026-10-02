@@ -26,9 +26,9 @@ export default async function BlogPostPage({ params }: Props) {
         <h1>{post.title}</h1>
       </header>
       <div className="blog-article-meta" aria-label="文章标签">
-        {(post.tags ?? [post.visibility === 'public' ? '公开随笔' : '上锁文章']).map((tag) => <span className="blog-badge" key={tag}>{tag}</span>)}
+        {(post.tags ?? [post.locked === false ? '公开随笔' : '上锁文章']).map((tag) => <span className="blog-badge" key={tag}>{tag}</span>)}
       </div>
-      {post.visibility === 'public' ? <ArticleBody content={post.content} /> : <LockedArticle encrypted={post.encrypted} />}
+      {post.locked === false ? <ArticleBody content={post.content} /> : <LockedArticle encrypted={post.encrypted} />}
     </article>
   </main>;
 }

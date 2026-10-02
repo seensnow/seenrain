@@ -19,8 +19,8 @@ export default function BlogsPage() {
         {posts.map((post) => <a className="blog-card" href={`${basePath}/blogs/${post.slug}/`} key={post.slug}>
           <div>
             <h2>{post.title}</h2>
-            <div className="blog-tags">{(post.tags ?? [post.visibility === 'public' ? '公开随笔' : '上锁文章']).map((tag) => <span className="blog-badge" key={tag}>{tag}</span>)}</div>
-            {post.visibility === 'locked' && <p className="blog-description">需要专属密码阅读</p>}
+            <div className="blog-tags">{(post.tags ?? [post.locked === false ? '公开随笔' : '上锁文章']).map((tag) => <span className="blog-badge" key={tag}>{tag}</span>)}</div>
+            {post.locked === true && <p className="blog-description">需要专属密码阅读</p>}
           </div>
           <span className="blog-arrow" aria-hidden="true">→</span>
         </a>)}

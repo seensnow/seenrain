@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const projects = [
   { title: 'Simple Reader', type: '应用', description: '项目介绍和公开链接正在整理中。' },
-  { title: '雪人工坊', type: '个人网站', description: '一个记录项目、笔记和日常想法的个人空间。' },
+  { title: '雪人工坊', type: '个人网站', description: '一个记录项目、笔记和日常想法的个人空间。', href: 'https://github.com/seensnow/seenrain' },
 ];
 
 export default function ProjectsPage() {
@@ -30,7 +30,11 @@ export default function ProjectsPage() {
                 <h3>{project.title}</h3>
                 <p>{project.description}</p>
               </div>
-              <span className="pending-link" aria-label={`${project.title} 链接待补充`}>链接待补充</span>
+              {project.href ? (
+                <a className="text-link" href={project.href} target="_blank" rel="noopener noreferrer" aria-label={`在 GitHub 查看${project.title}`}>GitHub ↗</a>
+              ) : (
+                <span className="pending-link" aria-label={`${project.title} 链接待补充`}>链接待补充</span>
+              )}
             </article>
           ))}
         </div>

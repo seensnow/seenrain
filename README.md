@@ -28,12 +28,12 @@ GITHUB_PAGES=true GITHUB_REPOSITORY=seensnow/seenrain npm run build
 title: 网站初建随笔
 slug: first-website-notes
 tags: [公开随笔]
-visibility: public
+locked: false
 draft: false
 ---
 ```
 
-下面直接写 Markdown 正文。`slug` 是网址，使用小写英文、数字和连字符，每篇唯一；改标题不需要改 slug。`tags` 可以填写多个标签。公开文章用 `visibility: public`，上锁文章用 `visibility: locked`，写作中的文章用 `draft: true`。上锁与标签独立，不要在文件中写密码。
+下面直接写 Markdown 正文。`slug` 是网址，使用小写英文、数字和连字符，每篇唯一；改标题不需要改 slug。`tags` 可以填写多个标签。公开文章用 `locked: false`，上锁文章用 `locked: true`，写作中的文章用 `draft: true`。上锁与标签独立，不要在文件中写密码。
 
 ### 修改文章与本地预览
 
@@ -55,7 +55,9 @@ npm run blog:sync -- --source "你的 Obsidian 文章文件夹路径"
 
 ### 上锁文章
 
-首次同步上锁文章或修改其内容时，终端会询问该篇文章的密码，输入不显示。密码至少 12 个字符，请自己保存；不同文章可以使用不同密码。不变的上锁文章不会重复询问。自动化场景可以设置 `BLOG_PASSWORD` 环境变量。
+本机已配置统一文章密码，保存在被 Git 忽略的 `.blog-local.json` 的 `sharedPassword` 字段中，该文件仅当前用户可读写。所有上锁文章自动使用这个密码，同步时不再逐篇询问；修改统一密码后，下次同步会用新密码重新加密已接入的上锁文章。密码不要写在 Markdown 原稿或网站代码里。
+
+在另一台电脑上需要重新配置本机密码；没有本机配置时可以通过 `BLOG_PASSWORD` 环境变量提供，或在终端按提示输入。
 
 正文在本机用 PBKDF2（SHA-256，600,000 次）和 AES-256-GCM 加密后上传。密码、草稿和私密正文不进入仓库。标题、slug、标签仍公开。读者在文章页输入正确密码后才显示正文。
 
