@@ -5,7 +5,7 @@ export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
   title: '关于我 — 雪人工坊',
-  description: '雪人工坊的个人介绍，即将入读剑桥大学工程专业。',
+  description: '雪人工坊的个人介绍，就读于剑桥大学工程专业。',
 };
 
 export default function AboutPage() {
@@ -23,7 +23,7 @@ export default function AboutPage() {
             <div>
               <span className="card-label">名字</span>
               <h3>雪人工坊</h3>
-              <p>学生 · 即将入读工程专业</p>
+              <p>学生 · 剑桥大学工程专业</p>
             </div>
             <div className="profile-draft">
               <span>介绍待补充</span>
@@ -32,15 +32,15 @@ export default function AboutPage() {
           </article>
 
           <article className="info-card info-wide">
-            <span className="card-label">即将开始</span>
+            <span className="card-label">大学</span>
             <h3>剑桥大学</h3>
-            <p>工程专业。</p>
+            <p>BA (Hons) 工程。</p>
           </article>
 
           <article className="info-card">
             <span className="card-label">高中</span>
             <h3>深圳国际交流书院</h3>
-            <p>4A* · 曾获年级第二。</p>
+            <p>4A* · 年级排名第二。</p>
           </article>
 
           <article className="info-card">

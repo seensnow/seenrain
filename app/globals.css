@@ -178,6 +178,27 @@ body { background:#eef5fa; }
 .sketch-footer a:hover { color:#2d6599; }
 .sketch-footer span:last-child { text-align:right; }
 
+.blog-stage { padding:clamp(32px,7vw,80px); }
+.blog-heading { margin:38px 0 48px; }
+.blog-heading>p,.blog-description { color:var(--muted); font-size:14px; line-height:1.8; }
+.blog-heading h1 { margin:12px 0; font-size:clamp(30px,5vw,52px); font-weight:400; overflow-wrap:anywhere; }
+.blog-section { margin-top:44px; }
+.blog-section h2 { font-size:24px; font-weight:400; border-bottom:1px solid var(--line); padding-bottom:16px; }
+.blog-card { display:block; padding:28px; margin-top:20px; border:1px solid var(--line); border-radius:20px; background:#fff; transition:box-shadow .2s; }
+.blog-card:hover { box-shadow:0 8px 26px rgba(37,85,128,.1); }
+.blog-card:focus-visible,.blog-button:focus-visible,.blog-lock input:focus-visible { outline:2px solid var(--blue); outline-offset:4px; }
+.blog-card h3 { font-size:24px; font-weight:400; margin:18px 0; }
+.blog-badge { color:#467496; font-size:12px; padding:4px 10px; border:1px solid var(--line); border-radius:999px; }
+.blog-read,.blog-empty { font-size:14px; color:var(--muted); }
+.blog-prose { max-width:720px; font-size:18px; line-height:2; overflow-wrap:anywhere; }
+.blog-prose p { margin:0 0 26px; white-space:pre-line; }
+.blog-prose a { color:var(--blue); text-decoration:underline; text-underline-offset:4px; }
+.blog-lock { max-width:480px; padding:28px; border:1px solid var(--line); border-radius:20px; background:white; }
+.blog-lock label { display:block; margin:24px 0 10px; }
+.blog-lock input { display:block; width:100%; padding:12px; border:1px solid #9ab5cc; border-radius:8px; }
+.blog-button { margin-top:18px; padding:12px 20px; border:1px solid var(--line); border-radius:8px; background:#eaf6ff; cursor:pointer; }
+.blog-button:disabled { opacity:.6; cursor:wait; }
+
 @keyframes snowfall { to { transform:translate3d(var(--drift),calc(62svh + 30px),0) rotate(260deg); } }
 @keyframes pulse { 50% { opacity:.35; transform:scale(.75); } }
 @keyframes blink { 50% { opacity:0; } }

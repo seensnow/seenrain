@@ -29,11 +29,11 @@ export default function Home() {
           <div className="academic-box">
             <article>
               <div className="academic-row"><strong>剑桥大学</strong><span>2025–2028</span></div>
-              <p>BA (Hons) 数学</p>
+              <p>BA (Hons) 工程</p>
             </article>
             <article>
               <div className="academic-row"><strong>深圳国际交流书院</strong><span>2021–2025</span></div>
-              <p>A*A*A*A*A* · 年级排名：1 / 545</p>
+              <p>4A* · 年级排名第二</p>
             </article>
           </div>
         </section>
