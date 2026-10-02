@@ -6,15 +6,23 @@
     "node": ">=22.13.0"
   },
   "scripts": {
+    "predev": "node scripts/generate-blog.mjs",
     "dev": "vinext dev",
+    "prebuild": "node scripts/generate-blog.mjs",
     "build": "vinext build && node scripts/prepare-github-pages.mjs",
+    "blog:sync": "node scripts/sync-blog.mjs",
+    "blog:publish": "node scripts/publish-blog.mjs",
+    "test:blog": "node --test tests/blog-workflow.test.mjs",
     "start": "vinext start",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },
   "dependencies": {
+    "gray-matter": "4.0.3",
     "next": "16.2.6",
     "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react-dom": "19.2.6",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.2.1",

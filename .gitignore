@@ -38,3 +38,6 @@ next-env.d.ts
 /work/
 /site/
 *-social-preview.png
+.blog-local.json
+.blog-sync-state.json
+*.tsbuildinfo

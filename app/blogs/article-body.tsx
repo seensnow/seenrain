@@ -1,7 +1,8 @@
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 export default function ArticleBody({ content }: { content: string }) {
-  return <div className="blog-prose">{content.trim().split(/\n\s*\n/).map((paragraph, index) => (
-    <p key={index}>{paragraph.split(/(https?:\/\/[^\s（）()<>]+)/g).map((part, i) =>
-      /^https?:\/\//.test(part) ? <a href={part} target="_blank" rel="noopener noreferrer" key={i}>{part}</a> : part
-    )}</p>
-  ))}</div>;
+  return <div className="blog-prose"><Markdown remarkPlugins={[remarkGfm]} components={{
+    a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>,
+  }}>{content}</Markdown></div>;
 }

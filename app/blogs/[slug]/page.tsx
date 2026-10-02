@@ -20,9 +20,14 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
   return <main className="site-shell">
     <SiteSidebar active="博客" />
-    <article className="blog-stage">
-      <a className="text-link" href={`${basePath}/blogs/`}>← 返回博客</a>
-      <header className="blog-heading"><p>{post.visibility === 'public' ? '公开随笔' : '上锁文章'}</p><h1>{post.title}</h1></header>
+    <article className="blog-stage blog-article">
+      <header className="blog-article-heading">
+        <a className="blog-back" href={`${basePath}/blogs/`} aria-label="返回博客">←</a>
+        <h1>{post.title}</h1>
+      </header>
+      <div className="blog-article-meta" aria-label="文章标签">
+        {(post.tags ?? [post.visibility === 'public' ? '公开随笔' : '上锁文章']).map((tag) => <span className="blog-badge" key={tag}>{tag}</span>)}
+      </div>
       {post.visibility === 'public' ? <ArticleBody content={post.content} /> : <LockedArticle encrypted={post.encrypted} />}
     </article>
   </main>;
