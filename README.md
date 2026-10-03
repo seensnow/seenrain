@@ -71,6 +71,6 @@ npm run blog:publish
 
 命令会同步原稿、构建检查、提交博客内容、推送到 GitHub，然后由 GitHub Actions 发布。仅提交 `content/blogs` 和生成的文章登记文件，不会把其他改动一起提交；如果暂存区已有修改，命令会停止。需要本机已登录 GitHub，且在 `main` 分支。
 
-**当前正式发布前还需要在仓库设置中启用 GitHub Pages，并选择 GitHub Actions 作为来源。** 上传成功不等于部署成功，可以在仓库 Actions 页面查看部署结果。
+GitHub Pages 已启用，使用 GitHub Actions 自动部署。网站地址：https://seensnow.github.io/seenrain/ 。推送 main 分支后，可以在仓库 Actions 页面查看部署结果。
 
 本地预览使用 `npm run dev`；构建和启动会自动根据仓库中的文章生成页面，无需在 CI 中访问 Obsidian。
